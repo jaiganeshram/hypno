@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>ஹிப்னாடிசம் & ஆழ்மன தியான பயிற்சி | Tamil Hypnosis Practice UI</title>
+  <meta name="description" content="ஹிப்னாடிசம், சுய வசியப் பயிற்சி மற்றும் ஆழ்மன அமைதிக்கான முழுமையான தமிழ் வலைத்தளம்.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- App Container (100vh viewport, no accidental scroll) -->
+  <div class="app-viewport" id="appViewport">
+
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-glyph">
+          <svg viewBox="0 0 40 40" class="spin-ring">
+            <circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/>
+            <circle cx="20" cy="20" r="11" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="8 4"/>
+            <circle cx="20" cy="20" r="4" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">ஆழ்மன வசியப் பயிற்சி</h1>
+          <span class="brand-caption">Hypnotic Focus & Meditation</span>
+        </div>
+      </div>
+
+      <!-- Quick Status Badges & Action Buttons -->
+      <div class="header-tools">
+        <!-- Quick Audio Pill -->
+        <button id="quickAudioBtn" class="pill-btn" title="ஒலியைத் தொடங்கு / நிறுத்து">
+          <span class="eq-bars" id="eqBars">
+            <i></i><i></i><i></i><i></i>
+          </span>
+          <span id="quickAudioText">ஆழ்நிலை ஒலி</span>
+        </button>
+
+        <!-- Quick Session Timer Pill -->
+        <div class="session-pill" id="sessionPill" title="பயிற்சி கால அளவு">
+          <span class="pulse-indicator" id="timerPulse"></span>
+          <span id="headerTimerDisplay">05:00</span>
+        </div>
+
+        <!-- Brain Science Theory Button -->
+        <button id="theoryBtn" class="pill-btn science-pill" title="மூளை அறிவியல் & அலைவரிசை தத்துவம்">
+          <span class="btn-emoji">🧠</span>
+          <span class="pill-text">மூளை அறிவியல்</span>
+        </button>
+
+        <!-- Color Theme Quick Switcher -->
+        <button id="themeCycleBtn" class="icon-btn" title="வண்ண அமைப்பு (Themes)">
+          <span class="btn-emoji">🎨</span>
+        </button>
+
+        <!-- Guide & Help -->
+        <button id="guideModalBtn" class="icon-btn" title="பயிற்சி வழிகாட்டி">
+          <span class="btn-emoji">📖</span>
+        </button>
+
+        <!-- Fullscreen / Trance Immersion -->
+        <button id="zenModeBtn" class="icon-btn" title="முழுத்திரை / கவனக் குவிப்பு முறை">
+          <span class="btn-emoji" id="zenIcon">⛶</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Hypnotic Stage (Fills available space) -->
+    <main class="hypno-stage" id="hypnoStage">
+      <!-- Peripheral Biofeedback Breathing Vignette -->
+      <div id="bioVignette" class="bio-vignette"></div>
+
+      <!-- Live Neurological EEG Oscilloscope HUD -->
+      <div id="eegHud" class="eeg-hud" title="நேரடி மூளை அலை மானிட்டர் (Live Brainwave HUD)">
+        <div class="eeg-hud-top">
+          <div class="eeg-badge-wrap">
+            <span class="eeg-pulse-dot" id="eegPulseDot"></span>
+            <span id="eegStateName" class="eeg-state-name">BETA: 18.4 Hz</span>
+          </div>
+          <div class="eeg-depth-wrap">
+            <span class="depth-lbl">ஆழ்நிலை:</span>
+            <strong id="eegDepthPct">8%</strong>
+          </div>
+        </div>
+        <canvas id="eegWaveCanvas" class="eeg-wave-canvas" width="220" height="38"></canvas>
+        <div class="eeg-depth-track">
+          <div id="eegDepthBar" class="eeg-depth-bar" style="width: 8%;"></div>
+        </div>
+      </div>
+
+      <!-- 3D Transform Canvas Wrapper -->
+      <div id="canvasWrap3D" class="canvas-wrap-3d">
+        <!-- Background Ambient Glow & Starry Particles -->
+        <canvas id="ambientCanvas" class="canvas-layer"></canvas>
+
+        <!-- Primary Hypnotic Canvas -->
+        <canvas id="hypnoCanvas" class="canvas-layer"></canvas>
+      </div>
+
+      <!-- Center Focal Anchor Dot -->
+      <div id="centerAnchor" class="center-anchor" title="கவன மையம்">
+        <div class="anchor-core"></div>
+        <div class="anchor-pulse"></div>
+      </div>
+
+      <!-- Breathing Guide Overlay (appears in breathing mode) -->
+      <div id="breathingGuide" class="breathing-guide">
+        <div class="breath-svg-wrap">
+          <svg viewBox="0 0 200 200" class="breath-svg">
+            <circle cx="100" cy="100" r="90" class="breath-bg-track"/>
+            <circle cx="100" cy="100" r="90" id="breathProgressTrack" class="breath-progress-track"/>
+          </svg>
+          <div class="breath-label-box">
+            <span id="breathPhaseLbl" class="breath-phase-lbl">தயாராகுங்கள்</span>
+            <span id="breathSecCountdown" class="breath-count">4</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Tamil Affirmation Mantra Capsule -->
+      <div id="mantraCapsule" class="mantra-capsule">
+        <span class="mantra-sparkle">✨</span>
+        <div class="mantra-text-wrap">
+          <p id="mantraText" class="mantra-text">என் மனம் முழுவதும் ஆழ்ந்த அமைதியை உணர்கிறது...</p>
+          <span class="mantra-hint">கண்களை மையப்புள்ளியில் நிலைநிறுத்துங்கள்</span>
+        </div>
+      </div>
+
+      <!-- Zen Exit Button (visible only in Zen Immersion mode) -->
+      <button id="zenExitBtn" class="zen-exit-pill" title="கட்டுப்பாடுகளைக் காட்டு">
+        <span>⚙️ கட்டுப்பாடுகளைக் காட்டு (Esc)</span>
+      </button>
+    </main>
+
+    <!-- Floating Bottom Dock (Compact, non-intrusive, pro glassmorphism) -->
+    <footer class="floating-dock" id="floatingDock">
+      <div class="dock-container">
+
+        <!-- 1. Visual Mode Selection Buttons -->
+        <div class="dock-segment mode-selectors">
+          <button class="mode-btn active" data-visual="spiral" title="ஹிப்னாடிக் சுழல்">
+            <span class="btn-icon">🌀</span>
+            <span class="btn-label">சுழல்</span>
+          </button>
+          <button class="mode-btn" data-visual="pendulum" title="காந்த ஊசல்">
+            <span class="btn-icon">🕰️</span>
+            <span class="btn-label">ஊசல்</span>
+          </button>
+          <button class="mode-btn" data-visual="breathing" title="சுவாச வட்டம்">
+            <span class="btn-icon">🫧</span>
+            <span class="btn-label">சுவாசம்</span>
+          </button>
+          <button class="mode-btn" data-visual="tunnel" title="முடிவிலா சுரங்கம்">
+            <span class="btn-icon">🕳️</span>
+            <span class="btn-label">சுரங்கம்</span>
+          </button>
+          <button class="mode-btn" data-visual="mandala" title="புனித மண்டலா (Sacred Mandala)">
+            <span class="btn-icon">🔯</span>
+            <span class="btn-label">மண்டலா</span>
+          </button>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <!-- 2. Controls & Popovers Toggles -->
+        <div class="dock-segment dock-actions">
+          <!-- Play / Pause Visual Animation -->
+          <button id="togglePlayBtn" class="dock-tool-btn" title="அனிமேஷன் இடைநிறுத்து / தொடங்கு">
+            <span id="playIcon">⏸</span>
+          </button>
+
+          <!-- Drawer 1: Sound Settings -->
+          <button class="dock-tool-btn has-drawer" data-drawer="audioDrawer" title="ஆழ்நிலை ஒலி அமைப்புகள்">
+            <span>🎧</span>
+            <span class="dock-lbl">ஒலி</span>
+          </button>
+
+          <!-- Drawer 2: Visual Adjustments (Speed, Direction, Theme) -->
+          <button class="dock-tool-btn has-drawer" data-drawer="visualDrawer" title="காட்சி வேக & வண்ண அமைப்புகள்">
+            <span>🎚️</span>
+            <span class="dock-lbl">அமைவு</span>
+          </button>
+
+          <!-- Drawer 3: Tamil Affirmations -->
+          <button class="dock-tool-btn has-drawer" data-drawer="mantraDrawer" title="சுய பரிந்துரை வரிகள்">
+            <span>✨</span>
+            <span class="dock-lbl">வரிகள்</span>
+          </button>
+
+          <!-- Drawer 4: Session Timer -->
+          <button class="dock-tool-btn has-drawer" data-drawer="timerDrawer" title="பயிற்சி கால அளவு">
+            <span>⏱️</span>
+            <span class="dock-lbl">நேரம்</span>
+          </button>
+        </div>
+
+      </div>
+    </footer>
+
+    <!-- POPUP DRAWERS (Smooth sliding panels above the dock) -->
+    
+    <!-- Drawer A: Audio Mixer -->
+    <div id="audioDrawer" class="dock-drawer">
+      <div class="drawer-drag-pill"></div>
+      <div class="drawer-header">
+        <div class="dh-title">
+          <span>🎧</span>
+          <h3>ஆழ்நிலை தியான ஒலிகள் (Web Audio)</h3>
+        </div>
+        <button class="drawer-close-btn">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-master-bar">
+          <p class="dh-hint">ஹெட்போன் (Headphones) அணிந்து கேட்பது மிகச் சிறந்தது</p>
+          <button id="drawerAudioToggle" class="btn-primary-glow">
+            <span id="drawerAudioIcon">▶</span> <span id="drawerAudioText">ஒலியைத் தொடங்கு</span>
+          </button>
+        </div>
+
+        <div class="mixer-list">
+          <!-- Binaural Beats -->
+          <div class="mixer-item">
+            <div class="mi-top">
+              <label class="toggle-switch">
+                <input type="checkbox" id="binauralToggle" checked>
+                <span class="toggle-slider"></span>
+                <span class="toggle-name">தீட்டா அலைகள் (Theta Trance 6Hz)</span>
+              </label>
+              <span class="badge-accent">ஆழ்நிலை</span>
+            </div>
+            <p class="mi-desc">மூளையை அமைதியான 4-7Hz தியான நிலைக்கு மாற்றும் அலைகள்</p>
+            <div class="range-wrap">
+              <span>ஒலியளவு:</span>
+              <input type="range" id="binauralVolumeSlider" min="0" max="1" step="0.05" value="0.6">
+            </div>
+          </div>
+
+          <!-- Metronome Tick -->
+          <div class="mixer-item">
+            <div class="mi-top">
+              <label class="toggle-switch">
+                <input type="checkbox" id="tickToggle" checked>
+                <span class="toggle-slider"></span>
+                <span class="toggle-name">தாள லய டிக்-டாக் (50 BPM)</span>
+              </label>
+              <span class="badge-accent">கவனம்</span>
+            </div>
+            <p class="mi-desc">இதயத் துடிப்பை சீராக்கும் மெதுவான ஒத்திசைவு</p>
+            <div class="range-wrap">
+              <span>ஒலியளவு:</span>
+              <input type="range" id="tickVolumeSlider" min="0" max="1" step="0.05" value="0.4">
+            </div>
+          </div>
+
+          <!-- 432Hz Om Harmonics Drone -->
+          <div class="mixer-item">
+            <div class="mi-top">
+              <label class="toggle-switch">
+                <input type="checkbox" id="droneToggle" checked>
+                <span class="toggle-slider"></span>
+                <span class="toggle-name">432Hz அமைதி நாதம் (Om Pad)</span>
+              </label>
+              <span class="badge-accent">அமைதி</span>
+            </div>
+            <p class="mi-desc">மன சஞ்சலங்களை நீக்கும் ஆழ்ந்த அதிர்வலை நாதம்</p>
+            <div class="range-wrap">
+              <span>ஒலியளவு:</span>
+              <input type="range" id="droneVolumeSlider" min="0" max="1" step="0.05" value="0.5">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer B: Visual Controls -->
+    <div id="visualDrawer" class="dock-drawer">
+      <div class="drawer-drag-pill"></div>
+      <div class="drawer-header">
+        <div class="dh-title">
+          <span>🎚️</span>
+          <h3>காட்சி வேக & வண்ண அமைப்புகள்</h3>
+        </div>
+        <button class="drawer-close-btn">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <div class="settings-grid">
+          <!-- Speed -->
+          <div class="setting-row">
+            <label>வேகம் (Speed): <strong id="speedDisplay">1.0x</strong></label>
+            <input type="range" id="speedInput" min="0.2" max="3.0" step="0.1" value="1.0">
+          </div>
+
+          <!-- Color Theme -->
+          <div class="setting-row">
+            <label>வண்ணக் கலவை (Theme):</label>
+            <div class="theme-chips" id="themeChips">
+              <button class="theme-chip" data-theme="monochrome" title="Classic Optical B&W">
+                <span class="color-dot dot-bw"></span> கருப்பு-வெள்ளை
+              </button>
+              <button class="theme-chip active" data-theme="violet" title="Mystic Violet">
+                <span class="color-dot dot-violet"></span> மர்ம ஊதா
+              </button>
+              <button class="theme-chip" data-theme="cyan" title="Deep Cyan">
+                <span class="color-dot dot-cyan"></span> கடல் நீலம்
+              </button>
+              <button class="theme-chip" data-theme="golden" title="Golden Glow">
+                <span class="color-dot dot-gold"></span> தங்க ஒளி
+              </button>
+              <button class="theme-chip" data-theme="emerald" title="Emerald Calm">
+                <span class="color-dot dot-emerald"></span> மரகத பச்சை
+              </button>
+            </div>
+          </div>
+
+          <!-- Spiral Direction (only in spiral mode) -->
+          <div class="setting-row" id="spiralDirRow">
+            <label>சுழலும் திசை:</label>
+            <div class="direction-switch">
+              <button class="dir-btn active" data-dir="1">வலஞ்சுழி ↻ (Clockwise)</button>
+              <button class="dir-btn" data-dir="-1">இடஞ்சுழி ↺ (Counter-CW)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer C: Affirmations (சுய கட்டளைகள்) -->
+    <div id="mantraDrawer" class="dock-drawer">
+      <div class="drawer-drag-pill"></div>
+      <div class="drawer-header">
+        <div class="dh-title">
+          <span>✨</span>
+          <h3>நேர்மறை சுய பரிந்துரைகள் (Autosuggestions)</h3>
+        </div>
+        <button class="drawer-close-btn">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <div class="mantra-controls-bar">
+          <label class="toggle-switch">
+            <input type="checkbox" id="showMantraToggle" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-name">திரையில் காட்டு</span>
+          </label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="speechMantraToggle">
+            <span class="toggle-slider"></span>
+            <span class="toggle-name">குரல் வழி வாசி (Tamil Voice)</span>
+          </label>
+        </div>
+
+        <div class="mantra-pill-container" id="mantraPillContainer">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="add-mantra-form">
+          <input type="text" id="newMantraInput" placeholder="புதிய தமிழ் சுய உறுதிமொழியை உள்ளிடவும்..." maxlength="90">
+          <button id="addMantraBtn" class="btn-primary-glow">+ சேர்</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drawer D: Timer (கால அளவு) -->
+    <div id="timerDrawer" class="dock-drawer">
+      <div class="drawer-drag-pill"></div>
+      <div class="drawer-header">
+        <div class="dh-title">
+          <span>⏱️</span>
+          <h3>பயிற்சி கால அளவு அமைப்புகள்</h3>
+        </div>
+        <button class="drawer-close-btn">&times;</button>
+      </div>
+      <div class="drawer-body text-center">
+        <p class="timer-guide-txt">கால அளவு முடிந்ததும் மென்மையான ஓங்கார மணி ஒலித்து விழிப்பு நிலைக்கு கொண்டு வரும்</p>
+
+        <div class="timer-chip-group">
+          <button class="timer-chip" data-mins="3">3 நிமிடங்கள்</button>
+          <button class="timer-chip active" data-mins="5">5 நிமிடங்கள்</button>
+          <button class="timer-chip" data-mins="10">10 நிமிடங்கள்</button>
+          <button class="timer-chip" data-mins="15">15 நிமிடங்கள்</button>
+          <button class="timer-chip" data-mins="0">முடிவற்றது (Continuous)</button>
+        </div>
+
+        <div class="timer-action-buttons">
+          <button id="startTimerBtn" class="btn-timer-action btn-start">பயிற்சியைத் தொடங்கு</button>
+          <button id="pauseTimerBtn" class="btn-timer-action btn-pause" disabled>இடைநிறுத்து</button>
+          <button id="resetTimerBtn" class="btn-timer-action btn-reset">மீட்டமை</button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End App Viewport -->
+
+  <!-- Master Hypnosis Guide & Brain Science Lightbox (ஒருங்கிணைந்த கலைக்களஞ்சியம்) -->
+  <div id="theoryModal" class="app-modal-backdrop">
+    <div class="app-modal-card theory-card">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <span class="modal-icon" id="lightboxIcon">🧠</span>
+          <div>
+            <h2 id="lightboxTitle">ஹிப்னாடிசம் பயிற்சி வழிகாட்டி & மூளை அறிவியல்</h2>
+            <span class="modal-subtitle">Comprehensive Hypnosis Guide, Trance Protocols & Neuroscience Hub</span>
+          </div>
+        </div>
+        <button id="theoryCloseBtn" class="modal-x-btn" title="மூடு">&times;</button>
+      </div>
+
+      <!-- Prominent Sticky Navigation Tabs (Always Visible) -->
+      <div class="theory-nav-tabs" id="theoryNavTabs">
+        <button class="ttab-btn active" data-theory="guide"><span class="tt-icon">📖</span> 1. பயிற்சி வழிகாட்டி</button>
+        <button class="ttab-btn" data-theory="safety"><span class="tt-icon">⚠️</span> 2. பாதுகாப்பு எச்சரிக்கை</button>
+        <button class="ttab-btn" data-theory="waves"><span class="tt-icon">🧠</span> 3. மூளை அலைவரிசைகள்</button>
+        <button class="ttab-btn" data-theory="anatomy"><span class="tt-icon">🧬</span> 4. அமிக்டலா & மூளை</button>
+        <button class="ttab-btn" data-theory="nervous"><span class="tt-icon">⚡</span> 5. வேகஸ் நரம்பு மண்டலம்</button>
+        <button class="ttab-btn" data-theory="chemistry"><span class="tt-icon">🧪</span> 6. நரம்பியக்கடத்திகள்</button>
+        <button class="ttab-btn" data-theory="iceberg"><span class="tt-icon">🧊</span> 7. மேல்மனம் vs ஆழ்மனம்</button>
+        <button class="ttab-btn" data-theory="protocol"><span class="tt-icon">🎯</span> 8. பயிற்சி நெறிமுறை</button>
+      </div>
+
+      <div class="modal-content-area theory-body">
+
+        <!-- TAB 1: Step-by-Step Practical Guide -->
+        <section id="ttab-guide" class="theory-section active">
+          <div class="theory-intro-banner">
+            <p>ஹிப்னாடிசம் என்பது வித்தையோ மந்திரமோ அல்ல; அது ஆழ்ந்த மன ஒருமைப்பாடு மற்றும் நரம்பியல் தளர்வுப் பயிற்சி. சிறந்த பலன்களைப் பெற கீழே உள்ள <strong>6 படிநிலைகளைப்</strong> பின்பற்றவும்:</p>
+          </div>
+
+          <div class="protocol-steps">
+            <div class="proto-step">
+              <span class="ps-badge">படி 1</span>
+              <div class="ps-info">
+                <h4>அமைதியான சூழலைத் தேர்ந்தெடுங்கள்</h4>
+                <p>எவ்வித வெளிப்புற சத்தமும் இல்லாத தனிமையான அறையில் வசதியாக அமரவும் அல்லது சாய்ந்து கொள்ளவும். உடலின் ஆடைகள் தளர்வாக இருப்பது நல்லது.</p>
+              </div>
+            </div>
+
+            <div class="proto-step">
+              <span class="ps-badge">படி 2</span>
+              <div class="ps-info">
+                <h4>ஸ்டீரியோ ஹெட்போன் அணியுங்கள் (Headphones Mandatory)</h4>
+                <p>தளத்தில் உள்ள 6Hz தீட்டா அலைகள் (Binaural Beats) வேலை செய்ய ஹெட்போன் மிக அவசியம். இடது மற்றும் வலது காதுகளில் வெவ்வேறு அலைவரிசைகள் செல்வதன் மூலமே மூளை ஆழ்நிலை தியானத்திற்குச் செல்லும்.</p>
+              </div>
+            </div>
+
+            <div class="proto-step">
+              <span class="ps-badge">படி 3</span>
+              <div class="ps-info">
+                <h4>பார்வையை மையப் புள்ளியில் நிலைநிறுத்துங்கள் (Visual Trance)</h4>
+                <p>திரையின் நடுவிலுள்ள ஒளிப்புள்ளியை அல்லது சுழல் வட்டத்தை இமை கொட்டாமல் மென்மையாகப் பாருங்கள். கண்களுக்கு அதிக அழுத்தம் தராமல், பார்வை தானாகவே சுழலின் ஆழத்திற்குள் மூழ்கட்டும்.</p>
+              </div>
+            </div>
+
+            <div class="proto-step">
+              <span class="ps-badge">படி 4</span>
+              <div class="ps-info">
+                <h4>சுவாசத்தை தாளத்திற்கு ஏற்ப மாற்றுங்கள் (வேகஸ் நரம்பு தூண்டுதல்)</h4>
+                <p>கீழ் பலகையில் 'சுவாசம்' முறையைத் தேர்வு செய்து, 4 வினாடி மூச்சை உள்ளிழுத்து, 4 வினாடி நிறுத்தி, 6 வினாடி மெதுவாக வெளியிடவும். இது உங்கள் இதயத் துடிப்பை 50-60 BPM-க்கு குறைத்து உடலை ஆல்ஃபா நிலைக்குத் தள்ளும்.</p>
+              </div>
+            </div>
+
+            <div class="proto-step">
+              <span class="ps-badge">படி 5</span>
+              <div class="ps-info">
+                <h4>சுய பரிந்துரை வரிகளை ஆழ்மனதில் பதிய வையுங்கள்</h4>
+                <p>திரையில் மிதக்கும் தமிழ் நேர்மறை வரிகளை வாய்விட்டு சொல்லாமல், உங்கள் ஆழ்மனதிற்குள் ஒரு மெல்லிய அமைதியான குரலாகப் பதிய வையுங்கள்.</p>
+              </div>
+            </div>
+
+            <div class="proto-step">
+              <span class="ps-badge">படி 6</span>
+              <div class="ps-info">
+                <h4>விழிப்பு நிலைக்குத் திரும்புதல் (Gentle Awakening)</h4>
+                <p>பயிற்சி நேரம் முடிந்ததும் மென்மையான மணி ஒலிக்கும். உடனே அவசரமாக எழாமல், மெதுவாக கைகளைத் தேய்த்து கண்களைத் திறந்து புத்துணர்ச்சியை உணருங்கள்.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: Safety & Caution -->
+        <section id="ttab-safety" class="theory-section">
+          <div class="theory-intro-banner" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.35);">
+            <p><strong style="color: #f87171;">⚠️ மிக முக்கிய பாதுகாப்பு எச்சரிக்கைகள் & மறுப்புரை (Caution & Safety Disclaimer):</strong></p>
+          </div>
+
+          <div class="science-pillars-list">
+            <div class="pillar-card" style="border-color: rgba(239, 68, 68, 0.3);">
+              <div class="pillar-num" style="background: #ef4444;">🚫</div>
+              <div class="pillar-content">
+                <h4 style="color: #f87171;">வாகனம் ஓட்டும் போதோ இயந்திரங்களை இயக்கும் போதோ பயன்படுத்தக் கூடாது</h4>
+                <p>இந்த தளம் உங்கள் மூளையின் விழிப்புநிலையைக் குறைத்து ஆல்ஃபா/தீட்டா மயக்க நிலைக்கு அழைத்துச் செல்லும். எனவே கார், பைக் ஓட்டும் போதோ அல்லது கூர்மையான இயந்திரங்களை இயக்கும் போதோ இதை ஒருபோதும் பயன்படுத்தக் கூடாது.</p>
+              </div>
+            </div>
+
+            <div class="pillar-card" style="border-color: rgba(239, 68, 68, 0.3);">
+              <div class="pillar-num" style="background: #ef4444;">⚡</div>
+              <div class="pillar-content">
+                <h4 style="color: #f87171;">ஒளி உணர்திறன் வலிப்பு (Photosensitive Epilepsy) உள்ளவர்கள் தவிர்க்கவும்</h4>
+                <p>சுழலும் வட்டங்கள் மற்றும் வேகமான ஒளி மாறுதல்கள் வலிப்பு நோய் உள்ளவர்களுக்கு ஒவ்வாமையை ஏற்படுத்தலாம். அத்தகைய பாதிப்பு உள்ளவர்கள் காட்சி சுழலைப் பார்ப்பதைத் தவிர்த்து, கண்களை மூடி ஒலியை மட்டும் கேட்கலாம்.</p>
+              </div>
+            </div>
+
+            <div class="pillar-card">
+              <div class="pillar-num" style="background: #10b981;">🛡️</div>
+              <div class="pillar-content">
+                <h4 style="color: #34d399;">சுய கட்டுப்பாடு எப்போதும் உங்கள் கையிலேயே உள்ளது (You are in Control)</h4>
+                <p>திரைப்படங்களில் காட்டுவது போல ஹிப்னாடிசத்தில் யாரையும் அவர்களின் விருப்பத்திற்கு மாறாகக் கட்டுப்படுத்த முடியாது (All Hypnosis is Self-Hypnosis). எந்த நேரத்திலும் அசௌகரியம் தோன்றினால் கண்களைத் திறந்து பயிற்சியை நிறுத்திவிடலாம்.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: 5 Brainwave States -->
+        <section id="ttab-waves" class="theory-section">
+          <div class="theory-intro-banner">
+            <p>மனித மூளையில் பில்லியன் கணக்கான நரம்புச் செல்கள் (Neurons) ஒன்றோடொன்று மின் சமிக்ஞைகள் (Electrical Impulses) மூலம் தொடர்பு கொள்கின்றன. இந்த மின் துடிப்புகளே <strong>மூளை அலைகள் (Brainwaves)</strong> என அழைக்கப்படுகின்றன. எலக்ட்ரோஎன்செபலோகிராம் (EEG) கருவி மூலம் இவற்றை விஞ்ஞானிகள் 5 பிரிவுகளாகப் பிரித்துள்ளனர்:</p>
+          </div>
+
+          <div class="brainwaves-grid">
+            <!-- 1. Gamma -->
+            <div class="wave-card wave-gamma">
+              <div class="wc-header">
+                <div class="wc-title-block">
+                  <span class="wave-symbol">γ</span>
+                  <h4>காமா அலைகள் (Gamma Waves)</h4>
+                </div>
+                <span class="freq-tag">30 Hz முதல் 100 Hz</span>
+              </div>
+              <p class="wc-desc"><strong>நிலை:</strong> அதீத அறிவு கூர்மை, சிக்கலான சிக்கல்களைத் தீர்த்தல் மற்றும் தகவல்களை ஒருங்கிணைத்தல்.</p>
+              <div class="wc-points">
+                <span>⚡ மிக உயர்ந்த அதிர்வெண் கொண்ட அலைகள்.</span>
+                <span>💡 ஆழ்ந்த தியானத்தில் முதிர்ந்த ஞானிகளிடம் இந்த அலைகள் திடீரென தோன்றும்.</span>
+              </div>
+            </div>
+
+            <!-- 2. Beta -->
+            <div class="wave-card wave-beta">
+              <div class="wc-header">
+                <div class="wc-title-block">
+                  <span class="wave-symbol">β</span>
+                  <h4>பீட்டா அலைகள் (Beta Waves)</h4>
+                </div>
+                <span class="freq-tag">14 Hz முதல் 30 Hz</span>
+              </div>
+              <p class="wc-desc"><strong>நிலை:</strong> இயல்பான விழிப்பு நிலை, தொடர் யோசனை, கவலை, வேலை செய்தல் மற்றும் மன அழுத்தம்.</p>
+              <div class="wc-points">
+                <span>🏃‍♂️ நாம் விழித்திருக்கும் பெரும்பாலான நேரங்களில் மூளை இந்த நிலையில் தான் இருக்கும்.</span>
+                <span>⚠️ அதிக நேரம் உயர் பீட்டாவில் (High Beta >22Hz) இருப்பது மன அழுத்தம், பதற்றம் மற்றும் தூக்கமின்மைக்கு வழிவகுக்கும்.</span>
+              </div>
+            </div>
+
+            <!-- 3. Alpha -->
+            <div class="wave-card wave-alpha highlight-wave">
+              <div class="wc-header">
+                <div class="wc-title-block">
+                  <span class="wave-symbol">α</span>
+                  <h4>ஆல்ஃபா அலைகள் (Alpha Waves) - பொன்னான அமைதி நிலை</h4>
+                </div>
+                <span class="freq-tag golden-tag">8 Hz முதல் 13 Hz</span>
+              </div>
+              <p class="wc-desc"><strong>நிலை:</strong> ஆழ்ந்த உடல் தளர்வு, அமைதி, படைப்பாற்றல் (Creativity) மற்றும் ஆழ்மனதின் நுழைவு வாயில்.</p>
+              <div class="wc-points">
+                <span>🧘‍♂️ கண்களை மூடி அமைதியாக அமரும் போதோ அல்லது தியானிக்கும் போதோ மூளை உடனே ஆல்ஃபா நிலைக்கு மாறுகிறது.</span>
+                <span>✨ <strong>ஆழ்மன திறவு கோல்:</strong> இந்த நிலையில் மன அழுத்தம் மறைகிறது, கற்றல் திறன் அதிகரிக்கிறது, ஆழ்மனதில் நல்ல பழக்கங்களை எளிதில் பதிய வைக்க முடியும்.</span>
+              </div>
+            </div>
+
+            <!-- 4. Theta -->
+            <div class="wave-card wave-theta highlight-wave">
+              <div class="wc-header">
+                <div class="wc-title-block">
+                  <span class="wave-symbol">θ</span>
+                  <h4>தீட்டா அலைகள் (Theta Waves) - ஹிப்னாடிக் வசிய நிலை</h4>
+                </div>
+                <span class="freq-tag purple-tag">4 Hz முதல் 8 Hz</span>
+              </div>
+              <p class="wc-desc"><strong>நிலை:</strong> ஆழ்ந்த தியானம், REM கனவு நிலை, மற்றும் முழுமையான ஹிப்னாடிக் மயக்க நிலை (Trance State).</p>
+              <div class="wc-points">
+                <span>🌀 <strong>வசியத்தின் ரகசியம்:</strong> தீட்டா நிலையில் மேல்மனதின் விமர்சன சிந்தனை (Critical Factor) தற்காலிகமாக விலகுகிறது. ஆழ்மனம் 100% செயல்படும் நிலைக்கு வருகிறது.</span>
+                <span>🎧 இந்த இணையதளத்தில் உள்ள 6Hz தீட்டா அலைகள் (Binaural Beats) உங்கள் மூளையை நேரடியாக இந்த நிலைக்கு அழைத்துச் செல்கின்றன.</span>
+              </div>
+            </div>
+
+            <!-- 5. Delta -->
+            <div class="wave-card wave-delta">
+              <div class="wc-header">
+                <div class="wc-title-block">
+                  <span class="wave-symbol">δ</span>
+                  <h4>டெல்டா அலைகள் (Delta Waves)</h4>
+                </div>
+                <span class="freq-tag">0.5 Hz முதல் 4 Hz</span>
+              </div>
+              <p class="wc-desc"><strong>நிலை:</strong> ஆழ்ந்த உறக்கம் (Deep Dreamless Sleep), மயக்க நிலை மற்றும் உடல் புத்துணர்ச்சி.</p>
+              <div class="wc-points">
+                <span>🛌 உடல் செல்கள் பழுதுநீக்கப்பட்டு, நோய் எதிர்ப்பு மண்டலம் வலுப்பெறும் நிலை.</span>
+                <span>🌙 விழிப்புணர்வு முழுமையாக மறைந்து போகும் நிலை.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: Brain Anatomy (அமிக்டலா, முன்மூளை, ஹிப்போகாம்பஸ்) -->
+        <section id="ttab-anatomy" class="theory-section">
+          <div class="theory-intro-banner">
+            <p>ஹிப்னாடிசம் மற்றும் தியானத்தின் போது மூளையின் குறிப்பிட்ட நரம்பு மையங்கள் எவ்வாறு செயல்படுகின்றன என்பதைப் புரிந்துகொள்வது, உங்கள் பயிற்சியை பல மடங்கு ஆழமாக்கும். இதில் முக்கிய பங்கு வகிக்கும் <strong>3 மூளைப் பகுதிகள்</strong>:</p>
+          </div>
+
+          <div class="anatomy-grid">
+            <!-- 1. Amygdala -->
+            <div class="anatomy-card card-amygdala">
+              <div class="ac-head">
+                <span class="ac-icon">🚨</span>
+                <div>
+                  <h4>1. அமிக்டலா (Amygdala) - மூளையின் அபாய மணி</h4>
+                  <span class="ac-sub">பயம், பதற்றம் மற்றும் உயிர் பிழைப்பு மையம் (Limbic System)</span>
+                </div>
+              </div>
+              <p class="ac-body">அமிக்டலா என்பது மூளையின் உள்பகுதியில் இருபுறமும் பாதாமி கொட்டை (Almond) வடிவில் இருக்கும் மிக முக்கியமான பகுதி. இது நம்மை ஆபத்துகளில் இருந்து காப்பாற்றும் அவசரக்கால அலாரமாகும்.</p>
+              <div class="ac-deep-box">
+                <strong>⚡ அமிக்டலா கடத்தல் (Amygdala Hijack):</strong>
+                <p>தீவிர பயம் அல்லது கோபம் வரும்போது, அமிக்டலா உடனடியாக சிந்திக்கும் பகுதியான முன்மூளையை முடக்கிவிட்டு, உடலை முழுமையான போரிடு அல்லது தப்பியோடு (Fight or Flight) நிலைக்குத் தள்ளிவிடும். இதனால் தான் பயத்தில் விவேகமாக சிந்திக்க முடிவதில்லை.</p>
+              </div>
+              <div class="ac-hypno-link">
+                <strong>🌀 ஹிப்னாடிசத்தில் என்ன நிகழ்கிறது?</strong>
+                <p>ஆல்ஃபா மற்றும் தீட்டா நிலைகளில் மூளை நுழையும் போது, அமிக்டலாவின் அதீத துடிப்பு <strong>சுமார் 65% முதல் 80% வரை தணிகிறது</strong>. இதனால் நாள்பட்ட பயங்கள் (Phobias), பதற்றம் மற்றும் பீதி (Panic Attacks) உடனே மாயமாய் மறைகின்றன.</p>
+              </div>
+            </div>
+
+            <!-- 2. Prefrontal Cortex -->
+            <div class="anatomy-card card-pfc">
+              <div class="ac-head">
+                <span class="ac-icon">🧐</span>
+                <div>
+                  <h4>2. முன்மூளை (Prefrontal Cortex - PFC)</h4>
+                  <span class="ac-sub">பகுத்தறிவு, தர்க்கம் மற்றும் முடிவெடுக்கும் தலைவர் (Executive Control)</span>
+                </div>
+              </div>
+              <p class="ac-body">மனித நெற்றிக்கு பின்புறம் அமைந்துள்ள இதுவே மனிதனை விலங்குகளிடம் இருந்து பிரித்துக் காட்டும் அதிநவீன தலைமை மூளை. இதுவே திட்டமிடுதல், தர்க்கம், சுய கட்டுப்பாடு மற்றும் விமர்சனத்திற்கு பொறுப்பானது.</p>
+              <div class="ac-deep-box">
+                <strong>🔒 விமர்சன வடிகட்டி (Critical Filter):</strong>
+                <p>முன்மூளை ஒரு தீவிர தணிக்கையாளராக செயல்படுகிறது. "நீ இதைச் சாதிக்க முடியாது", "நீ பலவீனமானவன்" போன்ற பழைய எதிர்மறை நம்பிக்கைகளை இது பாதுகாத்துக் கொண்டே இருக்கும். புதிய நல்வழி எண்ணங்களை உள்ளே விடாமல் தடுக்கும்.</p>
+              </div>
+              <div class="ac-hypno-link">
+                <strong>🌀 ஹிப்னாடிசத்தில் தற்காலிக முன்மூளை தளர்வு (Transient Hypofrontality):</strong>
+                <p>ஹிப்னாடிக் சுழல் மற்றும் தாள லயத்தைப் பார்க்கும்போது, முன்மூளையின் அதீத விமர்சன சிந்தனை தற்காலிகமாக ஓய்வெடுக்கிறது (Hypofrontality). அப்போது நாம் கொடுக்கும் சுய கட்டளைகள் (Affirmations) எந்தத் தடையும் இன்றி நேரடியாக ஆழ்மனதில் விதைக்கப்படுகின்றன!</p>
+              </div>
+            </div>
+
+            <!-- 3. Hippocampus -->
+            <div class="anatomy-card card-hippo">
+              <div class="ac-head">
+                <span class="ac-icon">📚</span>
+                <div>
+                  <h4>3. ஹிப்போகாம்பஸ் (Hippocampus)</h4>
+                  <span class="ac-sub">வாழ்நாள் நினைவாற்றல் ஆவணக்காப்பகம் (Memory & Learning Hub)</span>
+                </div>
+              </div>
+              <p class="ac-body">அமிக்டலாவிற்கு அருகில் கடல் குதிரை (Seahorse) வடிவில் அமைந்துள்ள ஹிப்போகாம்பஸ், நமது குறுகிய கால நினைவுகளை நீண்ட கால நினைவுகளாக மாற்றி ஆவணப்படுத்தும் நினைவகமாகும்.</p>
+              <div class="ac-deep-box">
+                <strong>📉 மன அழுத்தத்தால் ஏற்படும் பாதிப்பு:</strong>
+                <p>தொடர் மன அழுத்தம் மற்றும் கார்டிசோல் ஹார்மோன் ஹிப்போகாம்பஸின் செல்களை அழித்து நினைவாற்றல் மங்குதலுக்கு (Memory Loss) காரணமாகிறது.</p>
+              </div>
+              <div class="ac-hypno-link">
+                <strong>🌀 ஹிப்னாடிசமும் புதிய நரம்பு உருவாக்கமும் (Neurogenesis):</strong>
+                <p>தீட்டா அலைகளில் தியானிக்கும் போது ஹிப்போகாம்பஸில் <strong>BDNF (Brain-Derived Neurotrophic Factor)</strong> என்ற புரதம் உற்பத்தியாகி, புதிய நரம்பு செல்கள் உருவாக உதவுகிறது. இதனால் நினைவாற்றல், ஒருமைப்பாடு மற்றும் கற்கும் திறன் பன்மடங்கு பெருகும்.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: Autonomic Nervous System & Vagus Nerve -->
+        <section id="ttab-nervous" class="theory-section">
+          <div class="theory-intro-banner">
+            <p>உடலின் அனைத்து உள் உறுப்புகளையும் இயக்கும் <strong>தானியங்கி நரம்பு மண்டலம் (Autonomic Nervous System - ANS)</strong> இரண்டு எதிரெதிர் துருவங்களைக் கொண்டது. இவற்றின் சமநிலையே ஆரோக்கியமான வாழ்வின் ரகசியமாகும்.</p>
+          </div>
+
+          <!-- Two Nervous Systems Comparison -->
+          <div class="nervous-systems-grid">
+            <!-- Sympathetic -->
+            <div class="ans-box sympathetic-card">
+              <div class="ans-header">
+                <span class="ans-badge red-badge">அவசரக்கால இயக்கம்</span>
+                <h3>1. சிம்பதெடிக் நரம்பு மண்டலம்</h3>
+                <span class="ans-alias">(Sympathetic - Fight or Flight)</span>
+              </div>
+              <p class="ans-desc">ஆபத்து, பயம், கோபம் அல்லது அவசர சூழ்நிலையின் போது உடலை காக்க உடனே செயல்படும் அமைப்பு.</p>
+              <ul class="ans-reactions">
+                <li>❤️ <strong>இதயத் துடிப்பு & ரத்த அழுத்தம்:</strong> மிக வேகமாக உயரும் (>100 BPM).</li>
+                <li>🫁 <strong>சுவாசம்:</strong> வேகமாகவும் மேலோட்டமாகவும் மாறும்.</li>
+                <li>🧪 <strong>ஹார்மோன்கள்:</strong> அட்ரினலின் (Adrenaline) மற்றும் கார்டிசோல் ரத்தத்தில் பாயும்.</li>
+                <li>🛑 <strong>செரிமானம்:</strong> வயிறு மற்றும் குடல் இயக்கம் உடனடியாக முடங்கும்.</li>
+                <li>⚠️ <strong>நாள்பட்ட விளைவு:</strong> நவீன காலத்தில் அலுவலக வேலை, மொபைல் போன், கவலைகளால் மனிதர்கள் 24 மணி நேரமும் இந்த சிம்பதெடிக் நிலையிலேயே சிக்கி நோய்களுக்கு ஆளாகின்றனர்.</li>
+              </ul>
+            </div>
+
+            <!-- Parasympathetic -->
+            <div class="ans-box parasympathetic-card">
+              <div class="ans-header">
+                <span class="ans-badge green-badge">சாந்தம் & ஆரோக்கியம்</span>
+                <h3>2. பாராசிம்பதெடிக் நரம்பு மண்டலம்</h3>
+                <span class="ans-alias">(Parasympathetic - Rest, Digest & Heal)</span>
+              </div>
+              <p class="ans-desc">உடலை அமைதிப்படுத்தி, பழுதுநீக்கி, புத்துணர்ச்சி அளிக்கும் இயற்கையான சிகிச்சை மையம்.</p>
+              <ul class="ans-reactions">
+                <li>💚 <strong>இதயத் துடிப்பு & ரத்த அழுத்தம்:</strong> 50 முதல் 65 BPM-ஆக அமைதியாகக் குறையும்.</li>
+                <li>🫁 <strong>சுவாசம்:</strong> ஆழ்ந்த, சீரான வயிற்று சுவாசமாக மாறும்.</li>
+                <li>🧪 <strong>ஹார்மோன்கள்:</strong> செரட்டோனின், எண்டோர்பின்கள், GABA சுரக்கும்.</li>
+                <li>🥗 <strong>செரிமானம்:</strong> செரிமான நொதிகள் சீராகச் சுரந்து ஊட்டச்சத்துகள் உடலில் சேரும்.</li>
+                <li>✨ <strong>ஹிப்னாடிசத்தின் பங்கு:</strong> இந்த வலைத்தளத்தின் காட்சி மற்றும் ஒலிப் பயிற்சிகள் உங்கள் உடலை <strong>சில நிமிடங்களிலேயே பாராசிம்பதெடிக் அமைதி நிலைக்கு மாற்றிவிடுகின்றன!</strong></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- The Grand Vagus Nerve Section -->
+          <div class="vagus-deepdive-card">
+            <div class="vd-header">
+              <span class="vd-glyph">⚡</span>
+              <div>
+                <h3>வேகஸ் நரம்பு (The Vagus Nerve - 10th Cranial Nerve)</h3>
+                <span class="vd-subtitle">உடலையும் மூளையையும் இணைக்கும் "நாடோடி நரம்பு" மற்றும் பாராசிம்பதெடிக்கின் தளபதி</span>
+              </div>
+            </div>
+
+            <div class="vd-content-grid">
+              <div class="vd-col">
+                <h4>🧬 வேகஸ் நரம்பு என்றால் என்ன?</h4>
+                <p>லத்தீன் மொழியில் <em>'Vagus'</em> என்றால் <em>'நாடோடி' (Wanderer)</em> என்று பொருள். மூளையின் தண்டுப் பகுதியில் (Brainstem) தொடங்கி கழுத்து, குரல்வளை, இதயம், நுரையீரல், கல்லீரல், வயிறு மற்றும் குடல் வரை உடலின் அனைத்து முக்கிய உறுப்புகளையும் ஊடுருவிச் செல்லும் <strong>உடலின் மிக நீண்ட மற்றும் சக்திவாய்ந்த நரம்பு</strong> இதுவே ஆகும்.</p>
+                
+                <h4 style="margin-top: 1rem;">🌊 மூளை - குடல் அச்சு (Gut-Brain Axis):</h4>
+                <p>நாம் பயப்படும்போது "வயிற்றில் பட்டாம்பூச்சி பறப்பது" போல இருப்பதற்கும், மன அழுத்தம் வந்தால் அஜீரணம் அல்லது வயிற்று வலி வருவதற்கும் காரணம் இந்த வேகஸ் நரம்பே. மூளையில் உள்ள தகவல்களை குடலுக்கும், குடலின் நிலையை மூளைக்கும் கடத்துவது இதன் வேலையே.</p>
+              </div>
+
+              <div class="vd-col">
+                <h4>🎯 வேகல் டோன் (Vagal Tone) - மன அமைதியின் அளவுகோல்:</h4>
+                <p>ஒருவரது வேகஸ் நரம்பு எந்த அளவிற்கு சுறுசுறுப்பாகவும் வலிமையாகவும் இருக்கிறதோ, அவர் அவ்வளவு எளிதில் மன அழுத்தத்தில் இருந்து மீண்டு வருவார். இதற்கு <strong>High Vagal Tone</strong> என்று பெயர்.</p>
+
+                <div class="vagus-activation-methods">
+                  <h5>🧘‍♂️ வேகஸ் நரம்பைத் தூண்டும் 4 அறிவியல் வழிகள்:</h5>
+                  <ol>
+                    <li><strong>4-4-6-2 நீட்டிக்கப்பட்ட வெளிச்சுவாசம் (Long Exhalation):</strong> மூச்சை உள்ளிழுப்பதை விட மெதுவாக வெளியிடும்போது (Exhale) வேகஸ் நரம்பு உடனடியாக இதயத் துடிப்பை குறைத்து மூளையை ஆல்ஃபா நிலைக்கு மாற்றுகிறது.</li>
+                    <li><strong>குரல் நாண் அதிர்வுகள் (Humming & Chanting):</strong> ஓங்கார ஒலி (432Hz Om) அல்லது மெல்லிய முணுமுணுப்பு தொண்டையில் உள்ள வேகஸ் நரம்பின் கிளைகளைத் தூண்டுகிறது.</li>
+                    <li><strong>கண்களை ஒருமுகப்படுத்துதல் (Visual Trance):</strong> நிலையான பார்வை இதயத் துடிப்பின் மாறுபாட்டை (HRV) சீராக்குகிறது.</li>
+                    <li><strong>குளிர்ந்த நீர் & தியானம்:</strong> முகத்தில் குளிர்ந்த நீர் தெளிப்பதும், ஆழ்ந்த தியானமும் வேகல் டோனை உடனடியாக உயர்த்தும்.</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: Neurotransmitters & Brain Chemistry -->
+        <section id="ttab-chemistry" class="theory-section">
+          <div class="theory-intro-banner">
+            <p>நமது எண்ணங்களும் உணர்வுகளும் மூளையில் சுரக்கும் <strong>நரம்பியக்கடத்திகள் (Neurotransmitters) மற்றும் ஹார்மோன்களால்</strong> தீர்மானிக்கப்படுகின்றன. ஹிப்னாடிசப் பயிற்சியில் இந்த ரசாயனங்கள் எவ்வாறு மாறுகின்றன என்று பார்ப்போம்:</p>
+          </div>
+
+          <div class="chemicals-grid">
+            <!-- 1. GABA -->
+            <div class="chemical-card chem-gaba">
+              <div class="chem-head">
+                <span class="chem-symbol">GABA</span>
+                <div>
+                  <h4>காபா (Gamma-Aminobutyric Acid)</h4>
+                  <span class="chem-tag">மூளையின் இயற்கையான அமைதி மாத்திரை</span>
+                </div>
+              </div>
+              <p class="chem-desc">மூளையின் மிக முக்கிய தடை நரம்பியக்கடத்தி (Inhibitory Neurotransmitter). நரம்பு செல்களின் அதீத படபடப்பையும் பதற்றத்தையும் அடக்குவதே இதன் வேலை.</p>
+              <div class="chem-hypno-effect">
+                <span>✨ <strong>பயிற்சியின் பலன்:</strong> ஆழ்ந்த ஆல்ஃபா/தீட்டா நிலையில் காபாவின் அளவு சுமார் 27% அதிகரிக்கிறது. இது தூக்க மாத்திரைகள் தரும் அமைதியை இயற்கையாகவே உங்கள் மூளைக்கு அளிக்கிறது.</span>
+              </div>
+            </div>
+
+            <!-- 2. Serotonin -->
+            <div class="chemical-card chem-serotonin">
+              <div class="chem-head">
+                <span class="chem-symbol">5-HT</span>
+                <div>
+                  <h4>செரட்டோனின் (Serotonin)</h4>
+                  <span class="chem-tag">மகிழ்ச்சி & மன நிறைவு ரசாயனம்</span>
+                </div>
+              </div>
+              <p class="chem-desc">மனநிலை நிலைத்தன்மை (Mood stabilization), நல்ல தூக்கம் மற்றும் திருப்தியான உணர்வை உருவாக்குகிறது. (ஆச்சரியமாக, உடலின் 90% செரட்டோனின் குடலில்தான் உற்பத்தியாகிறது!).</p>
+              <div class="chem-hypno-effect">
+                <span>✨ <strong>பயிற்சியின் பலன்:</strong> வேகஸ் நரம்பு தூண்டப்படும் போது குடலில் இருந்து செரட்டோனின் சுரப்பு சீராகி, மனச்சோர்வு (Depression) மற்றும் கவலை மறைகிறது.</span>
+              </div>
+            </div>
+
+            <!-- 3. Dopamine -->
+            <div class="chemical-card chem-dopamine">
+              <div class="chem-head">
+                <span class="chem-symbol">DA</span>
+                <div>
+                  <h4>டோபமைன் (Dopamine)</h4>
+                  <span class="chem-tag">ஊக்கம், உந்துதல் & வெற்றி ரசாயனம்</span>
+                </div>
+              </div>
+              <p class="chem-desc">நாம் ஒரு இலக்கை அடையும் போதோ, புதிய விஷயங்களை ஆர்வத்துடன் கற்கும் போதோ சுரக்கும் வெகுமதி ரசாயனம் (Reward Chemical).</p>
+              <div class="chem-hypno-effect">
+                <span>✨ <strong>பயிற்சியின் பலன்:</strong> சுய பரிந்துரைகள் (Autosuggestions) மூலமாக "நான் சாதிப்பேன்" என்ற எண்ணம் பதியும்போது டோபமைன் நரம்பு இணைப்புகள் பலமடைந்து தன்னம்பிக்கை உயர்கிறது.</span>
+              </div>
+            </div>
+
+            <!-- 4. Endorphins -->
+            <div class="chemical-card chem-endorphins">
+              <div class="chem-head">
+                <span class="chem-symbol">END</span>
+                <div>
+                  <h4>எண்டோர்பின்கள் (Endorphins)</h4>
+                  <span class="chem-tag">உடலின் இயற்கையான வலி நிவாரணி</span>
+                </div>
+              </div>
+              <p class="chem-desc">உடலில் ஏற்படும் வலிகளைக் குறைத்து, பரவச உணர்வை (Euphoria) தரும் இயற்கையான மார்ஃபின் போன்ற மூலக்கூறுகள்.</p>
+              <div class="chem-hypno-effect">
+                <span>✨ <strong>பயிற்சியின் பலன்:</strong> ஹிப்னாடிசத்தின் போது உடல் நரம்புகள் தளர்வடைந்து எண்டோர்பின் சுரப்பதால், தலைவலி மற்றும் உடல் வலிகள் மெல்ல மெல்ல கரைகின்றன.</span>
+              </div>
+            </div>
+
+            <!-- 5. Cortisol -->
+            <div class="chemical-card chem-cortisol">
+              <div class="chem-head">
+                <span class="chem-symbol">CORT</span>
+                <div>
+                  <h4>கார்டிசோல் (Cortisol - மன அழுத்த ஹார்மோன்)</h4>
+                  <span class="chem-tag red-tag">குறைய வேண்டிய நச்சுப் பொருள்</span>
+                </div>
+              </div>
+              <p class="chem-desc">அட்ரினல் சுரப்பிகளால் சுரக்கப்படும் உயிர்வாழும் ஹார்மோன். ஆனால் இது ரத்தத்தில் தொடர்ச்சியாக அதிகமாக இருந்தால் உயர் ரத்த அழுத்தம், சர்க்கரை நோய், தூக்கமின்மை மற்றும் தொப்பைக்கு வழிவகுக்கும்.</p>
+              <div class="chem-hypno-effect">
+                <span>📉 <strong>பயிற்சியின் பலன்:</strong> வெறும் 10 நிமிட தீட்டா அலை தியானப் பயிற்சி ரத்தத்தில் உள்ள கார்டிசோல் அளவை <strong>30% முதல் 45% வரை உடனடியாகக் குறைக்கிறது!</strong></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: Iceberg Conscious vs Subconscious -->
+        <section id="ttab-iceberg" class="theory-section">
+          <div class="theory-intro-banner">
+            <p>உளவியல் அறிஞர் சிக்மண்ட் பிராய்டு (Sigmund Freud) மனித மனதை ஒரு <strong>பனிப்பாறையுடன் (Iceberg)</strong> ஒப்பிட்டார். கடலுக்கு மேல் தெரியும் சிறு பகுதி மேல்மனம்; கடலுக்கு அடியில் மறைந்திருக்கும் பிரம்மாண்ட பகுதியே ஆழ்மனம்.</p>
+          </div>
+
+          <div class="iceberg-comparison-grid">
+            <div class="mind-col conscious-box">
+              <div class="mind-col-head">
+                <span class="mind-icon">🧠</span>
+                <h3>மேல்மனம் (Conscious Mind)</h3>
+                <span class="mind-pct">வெறும் 5% முதல் 10% மட்டுமே</span>
+              </div>
+              <ul class="mind-features">
+                <li><strong>தர்க்கம் & பகுத்தறிவு:</strong> எது சரி, எது தவறு என காரண காரியங்களை ஆராயும்.</li>
+                <li><strong>சந்தேகம் & பயம்:</strong> புது விஷயங்களை ஏற்க தயங்கும், பாதுகாப்பிற்கு முன்னுரிமை தரும்.</li>
+                <li><strong>தற்காலிக நினைவாற்றல்:</strong> அன்றாட நிகழ்வுகளை மட்டுமே நினைவில் வைத்திருக்கும்.</li>
+                <li><strong>தன்னம்பிக்கை கட்டுப்பாடு:</strong> எண்ணங்களின் மூலமாக மட்டுமே செயல்படும்.</li>
+              </ul>
+              <div class="critical-guard-box">
+                <strong>🛡️ விமர்சனக் காவலன் (Critical Faculty):</strong>
+                <p>மேல்மனதிற்கும் ஆழ்மனதிற்கும் இடையே ஒரு உறுதியான காவலர் போல செயல்படுகிறது. புதிய நேர்மறை எண்ணங்கள் அல்லது பழக்கங்கள் உள்ளே செல்லாமல் தடுத்து திருப்பி அனுப்பிவிடும்.</p>
+              </div>
+            </div>
+
+            <div class="mind-col subconscious-box">
+              <div class="mind-col-head">
+                <span class="mind-icon">🌊</span>
+                <h3>ஆழ்மனம் (Subconscious Mind)</h3>
+                <span class="mind-pct">சுமார் 90% முதல் 95% பிரம்மாண்ட சக்தி</span>
+              </div>
+              <ul class="mind-features">
+                <li><strong>வாழ்நாள் நினைவுகள்:</strong> பிறந்த நாள் முதல் இன்று வரை பார்த்த, கேட்ட, உணர்ந்த அனைத்தும் இதில் பதிவாகி இருக்கும்.</li>
+                <li><strong>பழக்கவழக்கங்கள்:</strong> நாம் யோசிக்காமல் செய்யும் அனைத்து பழக்கங்களும் (வாகனம் ஓட்டுதல், நடை, பயங்கள்) ஆழ்மனதில் இருந்து வருகின்றன.</li>
+                <li><strong>உடல் அனிச்சை செயல்கள்:</strong> இதயத் துடிப்பு, சுவாசம், ரத்த ஓட்டம், செரிமானம் ஆகியவற்றை இடைவிடாமல் இயக்குவது ஆழ்மனமே.</li>
+                <li><strong>விமர்சனம் அற்றது:</strong> ஆழ்மனதிற்கு தர்க்கம் தெரியாது; அதற்கு நீங்கள் உண்மையைச் சொன்னாலும், பொய்யைச் சொன்னாலும் அப்படியே ஏற்றுக்கொள்ளும்!</li>
+              </ul>
+              <div class="subconscious-power-tip">
+                <strong>💡 ஹிப்னாடிசத்தின் நோக்கம்:</strong>
+                <p>விமர்சனக் காவலனை (Critical Faculty) மென்மையாக ஓய்வெடுக்க வைத்து, ஆழ்மனதில் வெற்றிக்கான நேர்மறை விதைகளை (Positive Autosuggestions) நேரடியாக விதைப்பதுதான் ஹிப்னாடிசம்!</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 6: Practical Scientific Protocol -->
+        <section id="ttab-protocol" class="theory-section">
+          <div class="theory-intro-banner">
+            <p>நரம்பியல் அறிவியலின் படி, அமிக்டலாவை சாந்தப்படுத்தி, வேகஸ் நரம்பைத் தூண்டி, ஆல்ஃபா & தீட்டா நிலையை எவ்வித சிரமமும் இன்றி அடைய உதவும் <strong>5 படிகள் கொண்ட முறை (5-Step Protocol)</strong>:</p>
+          </div>
+
+          <div class="protocol-steps">
+            <div class="proto-step">
+              <span class="ps-badge">படி 1</span>
+              <div class="ps-info">
+                <h4>சரியான சூழல் மற்றும் நேரம்</h4>
+                <p>எவ்வித சத்தமும் இல்லாத தனிமையான அறையைத் தேர்வு செய்யவும். காலை எழுந்த உடனோ அல்லது இரவு தூங்குவதற்கு முன்போ மூளை இயற்கையாகவே ஆல்ஃபா நிலைக்கு மிக அருகில் இருக்கும். அந்த நேரங்களில் பயிற்சி செய்வது 3 மடங்கு கூடுதல் பலன் தரும்.</p>
+              </div>
+            </div>
+
+            <div class="proto-step">
+              <span class="ps-badge">படி 2</span>
+              <div class="ps-info">
+                <h4>ஸ்டீரியோ ஹெட்போன் பயன்பாடு (Stereo Headphones)</h4>
+                <p>ஃபோன் ஸ்பீக்கரில் கேட்டால் இரண்டு காதுகளுக்கும் ஒரே ஒலி செல்லும்; அலைவரிசை வித்தியாசம் கிடைக்காது. எனவே தரமான ஹெட்போன் அணிந்து, தீட்டா அலைகள் மற்றும் அமைதி நாதத்தை கேட்கவும்.</p>
+              </div>
+            </div>
+
+            <div class="proto-step">
+              <span class="ps-badge">படி 3</span>
+              <div class="ps-info">
+                <h4>கண் பார்வையை மையத்தில் நிறுத்துதல்</h4>
+                <p>முழுத்திரை முறைக்கு (Zen Mode - விசை 'F') சென்று, திரையின் நடுவிலுள்ள மையப் புள்ளியை இமைக்காமல் மென்மையாகப் பாருங்கள். கண்களுக்கு அதிக அழுத்தம் கொடுக்காமல் பார்வை தானாகவே சுழலில் மூழ்கட்டும்.</p>
+              </div>
+            </div>
+
+            <div class="proto-step">
+              <span class="ps-badge">படி 4</span>
+              <div class="ps-info">
+                <h4>சுவாசத்தை தாளத்திற்கு ஏற்ப மாற்றுதல் (வேகஸ் தூண்டுதல்)</h4>
+                <p>சுவாச வட்டப் பயிற்சியைத் தேர்வு செய்து, 4 வினாடி மூச்சை உள்ளிழுத்து, 4 வினாடி நிறுத்தி, 6 வினாடி மெதுவாக வெளியிடவும். இது வேகஸ் நரம்பைத் தூண்டி இதயத் துடிப்பை உடனே குறைக்கும்.</p>
+              </div>
+            </div>
+
+            <div class="proto-step">
+              <span class="ps-badge">படி 5</span>
+              <div class="ps-info">
+                <h4>சுய உறுதிமொழிகளை ஆழ்மனதில் பதியவைத்தல்</h4>
+                <p>தீட்டா நிலை வந்தவுடன் திரையில் தோன்றும் தமிழ் நேர்மறை வரிகளை உங்கள் ஆழ்மனதில் பதிய வையுங்கள். உங்கள் சொந்த லட்சியங்களையும் வரிகளாகச் சேர்த்து பயிற்சி செய்யலாம்.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="modal-bottom">
+        <button id="theoryUnderstoodBtn" class="btn-primary-glow">புரிந்து கொண்டேன் / பயிற்சியைத் தொடங்கு</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
