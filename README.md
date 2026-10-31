@@ -69,5 +69,5 @@
 
 ## 🚀 இயக்குவது எப்படி?
 
-[`index.html`](file:///d:/My%20trackerwave_files/Personal/website/hypnotism/index.html) கோப்பை ஏதேனும் ஒரு நவீன இணைய உலாவியில் (Chrome, Edge, Firefox, Safari) நேரடியாகத் திறக்கவும். இணைய இணைப்பு இன்றியும் (Offline) 100% வேலை செய்யும்!
+[`index.html`](file:///d:/My%20trackerwave_files/Personal/website/hypno/index.html) கோப்பை ஏதேனும் ஒரு நவீன இணைய உலாவியில் (Chrome, Edge, Firefox, Safari) நேரடியாகத் திறக்கவும். இணைய இணைப்பு இன்றியும் (Offline) 100% வேலை செய்யும்!
 

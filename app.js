@@ -140,16 +140,12 @@
   const zenExitBtn = document.getElementById('zenExitBtn');
   const themeCycleBtn = document.getElementById('themeCycleBtn');
   const guideModalBtn = document.getElementById('guideModalBtn');
-  const guideModal = document.getElementById('guideModal');
-  const modalCloseBtn = document.getElementById('modalCloseBtn');
-  const modalAcknowledgeBtn = document.getElementById('modalAcknowledgeBtn');
 
   // Brain Science Theory Modal DOM elements
   const theoryBtn = document.getElementById('theoryBtn');
   const theoryModal = document.getElementById('theoryModal');
   const theoryCloseBtn = document.getElementById('theoryCloseBtn');
   const theoryUnderstoodBtn = document.getElementById('theoryUnderstoodBtn');
-  const openTheoryFromGuideBtn = document.getElementById('openTheoryFromGuideBtn');
 
   // Advanced UI DOM Elements (EEG HUD, 3D Canvas Wrap, Bio Vignette)
   const canvasWrap3D = document.getElementById('canvasWrap3D');
@@ -1393,13 +1389,6 @@
       if (e.key === 'Escape') {
         if (theoryModal && theoryModal.classList.contains('open')) {
           closeLightbox();
-        } else if (state.activeDrawer) {
-          closeAllDrawers();
-        } else if (state.isZenActive) {
-          toggleZenMode();
-        }
-      } else if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
-          hideModal();
         } else if (state.activeDrawer) {
           closeAllDrawers();
         } else if (state.isZenActive) {
